@@ -1,4 +1,4 @@
-# core/llm/prompt_templates.py
+# llm/prompt_templates.py
 
 """
 Tập hợp các prompt template cho các node trong LangGraph.

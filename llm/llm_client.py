@@ -1,4 +1,4 @@
-# core/llm/llm_client.py
+# llm/llm_client.py
 
 import openai
 from config.settings import settings
