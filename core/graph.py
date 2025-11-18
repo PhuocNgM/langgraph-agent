@@ -1,18 +1,20 @@
 # core/graph.py
 from langgraph.graph import StateGraph, END
+from core.retrieve_node import retriever_node
 from core.state import AgentState
 from core.planner_node import planner_node
 from core.action_node import action_node
 from core.reflect_node import reflect_node
 from core.memory_node import memory_node
 
-def build_agent_graph() -> StateGraph:
+def AgentGraph  () -> StateGraph:
     """
     Xây dựng đồ thị LangGraph cho agent.
     """
     graph = StateGraph(AgentState)
 
     # Add các node vào graph
+    graph.add_node("retriever", retriever_node)
     graph.add_node("planner", planner_node)
     graph.add_node("action", action_node)
     graph.add_node("reflect", reflect_node)

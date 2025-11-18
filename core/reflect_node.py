@@ -1,26 +1,31 @@
 # core/reflect_node.py
+from typing import Dict, Any
+from datetime import datetime
+from core.state import AgentState, ProgressLog
+from llm.llm_client import call_llm
 
-from core.state import AgentState
-from langgraph.types import NodeOutput
+def reflect_node(state: AgentState) -> Dict[str, Any]:
+    """ Đánh giá lại hiệu quả training """
+    progress = state.get("progress", [])
+    prompt = f"""
+    Dưới đây là tiến trình đào tạo:
+    {progress}
 
-def reflect_node(state: AgentState) -> NodeOutput:
+    Hãy đánh giá mức độ đạt mục tiêu và gợi ý cải thiện cho lần sau.
     """
-    Node phản chiếu: đánh giá kết quả hành động trước đó và quyết định bước tiếp theo.
-    """
+    reflection = call_llm(prompt)
+    print(f"💭 Phản tư: {reflection[:150]}...")
 
-    result = state.get("result", "")
-    plan = state.get("plan", "")
+    # Tạo log
+    log_entry = ProgressLog(
+        timestamp=datetime.now().isoformat(timespec="seconds"),
+        step_name="reflect_node",
+        update_key="reflection",
+        value=reflection
+    )
 
-    # Giả lập logic phản chiếu — sau này có thể dùng LLM để kiểm định chất lượng
-    if not result or "lỗi" in result.lower():
-        reflection = "Kết quả không hợp lệ, cần thử lại hành động."
-        next_step = "planner → action"
-    else:
-        reflection = "Kết quả hợp lệ, chuyển sang cập nhật bộ nhớ."
-        next_step = "reflect → memory"
-
-    # Ghi lại suy nghĩ vào state
+    # Trả về các cập nhật
     return {
         "reflection": reflection,
-        "step": next_step,
+        "progress": state.get("progress", []) + [log_entry]
     }

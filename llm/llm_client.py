@@ -1,4 +1,4 @@
-# core/llm/llm_client.py
+# llm/llm_client.py
 
 import openai
 from config.settings import settings
@@ -28,3 +28,10 @@ class LLMClient:
             return response.choices[0].message.content.strip()
         except Exception as e:
             return f"[LLM Error] {e}"
+
+
+# ✅ Hàm tiện ích ngoài class
+def call_llm(prompt: str) -> str:
+    """Hàm tiện ích để gọi LLM nhanh (giữ tương thích với code cũ)."""
+    client = LLMClient()
+    return client.generate(prompt)
