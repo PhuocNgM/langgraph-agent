@@ -3,28 +3,26 @@
 from core.state import AgentState
 from langgraph.types import NodeOutput
 from typing import Dict
+from llm.llm_client import LLMClient
+from llm.prompt_templates import PROMPT_TEMPLATES
 
-def planner_node(state: AgentState) -> NodeOutput:
+def planner_node(state: AgentState):
     """
-    Node phân tích yêu cầu và lên kế hoạch hành động cho agent.
+    Sinh kế hoạch hành động (plan) dựa trên input từ người dùng.
     """
+    user_input = state.get("input")
+    if not user_input:
+        return {"error": "Không có input để lập kế hoạch."}
 
-    user_input = state.get("input", "")
-    history = state.get("history", [])
+    llm = LLMClient()
 
-    # (Tạm thời logic giả — sau này bạn có thể thay bằng LLM call)
-    if "tìm" in user_input.lower():
-        plan = "Sử dụng công cụ tìm kiếm để lấy thông tin."
-    elif "tính toán" in user_input.lower():
-        plan = "Dùng tool tính toán để trả kết quả."
-    else:
-        plan = "Trả lời trực tiếp bằng mô hình ngôn ngữ."
+    # Gọi LLM với prompt
+    prompt = PROMPT_TEMPLATES.format(user_input=user_input)
+    plan = llm.generate(prompt)
 
     # Cập nhật state
-    return {
-        "plan": plan,
-        "step": "planner → action",
-    }
+    state.set("plan", plan)
+    return {"plan": plan}
 
 
 # [planner_node] → [action_node] → [reflect_node] → [memory_node] → END
