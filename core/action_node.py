@@ -1,27 +1,41 @@
 # core/action_node.py
 
-from core.state import AgentState
-from langgraph.types import NodeOutput
-from typing import Dict
+from typing import Dict, Any
+from datetime import datetime
+from core.state import AgentState, ProgressLog
+from llm.llm_client import call_llm 
 
-def action_node(state: AgentState) -> NodeOutput:
-    """
-    Node thực thi hành động theo kế hoạch của planner.
-    """
 
-    plan = state.get("plan", "")
-    user_input = state.get("input", "")
+def action_node(state: AgentState) -> Dict[str, Any]:
+    plan = state.get("plan") or ""
+    context = state.get("context", "No base knowledge provided.") 
+    
+    steps = [s.strip() for s in plan.splitlines() if s.strip()]
+    new_logs = []
 
-    # Mô phỏng hành vi thực thi — sau này có thể thay bằng tool hoặc LLM call
-    if "tìm kiếm" in plan.lower():
-        result = f"[Tool] Kết quả giả lập cho yêu cầu: '{user_input}'"
-    elif "tính toán" in plan.lower():
-        result = f"[Tool] Kết quả phép tính cho yêu cầu: '{user_input}'"
-    else:
-        result = f"[LLM] Trả lời trực tiếp cho: '{user_input}'"
+    for i, step in enumerate(steps, start=1):
+        prompt = f"""
+        YOU ARE A TRAINING ASSISTANT. YOUR RESPONSE MUST BE STRICTLY BASED ON THE PROVIDED CONTEXT.
 
-    # Cập nhật state
+        [RETRIEVED KNOWLEDGE]:
+        {context}
+        ---
+
+        Step to execute: {step}
+        Generate detailed instructions OR a short quiz question based only on the RETRIEVED KNOWLEDGE for this step.
+        If the context is insufficient, state that you cannot proceed.
+        """
+        
+        output = call_llm(prompt)
+        print(f"🧠 LLM Output (Step {i}): {output[:100]}...") # Print EN
+        
+        log_entry = ProgressLog(
+            # ... (log creation) ...
+            step_name="action_node",
+            value=output
+        )
+        new_logs.append(log_entry)
+
     return {
-        "result": result,
-        "step": "action → reflect",
+        "progress": state.get("progress", []) + new_logs
     }

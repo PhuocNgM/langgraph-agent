@@ -1,4 +1,4 @@
 {
-  "python.defaultInterpreterPath": "/Users/nguyenphuoc/miniconda3/envs/langgraph-env/bin/python",
+  "python.defaultInterpreterPath": "/home/ngmphuoc/miniconda3/envs/langgraph/bin/python",
   "python.terminal.activateEnvironment": true
 }

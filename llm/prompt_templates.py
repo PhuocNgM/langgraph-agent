@@ -1,28 +1,39 @@
 # llm/prompt_templates.py
 
 """
-Tập hợp các prompt template cho các node trong LangGraph.
-Giúp giữ phong cách thống nhất và dễ tinh chỉnh sau này.
+A collection of English prompt templates for LangGraph nodes.
+Ensures unified style, consistency, and easy future tuning.
 """
 
 PROMPT_TEMPLATES = {
     "planner": """
-    Bạn là một trợ lý AI chuyên lập kế hoạch.
-    Phân tích yêu cầu của người dùng và cho biết hành động phù hợp nhất để thực hiện.
+    You are an expert AI planner. Your task is to analyze the user's request and provided context, then determine the single best next action.
 
-    Đầu vào: {user_input}
-    Lịch sử: {history}
+    [RAG CONTEXT]: {context}
+    [USER QUERY]: {user_input}
+    [HISTORY]: {history}
 
-    → Trả lời ngắn gọn: mô tả bước hành động nên làm tiếp theo.
+    -> Respond briefly: describe the single action step to take next.
     """,
 
     "reflect": """
-    Bạn là hệ thống phản chiếu.
-    Hãy xem xét phản hồi của agent và xác định xem nó có hợp lý không.
+    You are the reflection system. Your job is to strictly evaluate the agent's final generated response.
     
-    Kết quả: {result}
-    Kế hoạch ban đầu: {plan}
+    [USER QUERY]: {query}
+    [AGENT RESPONSE]: {agent_response}
+    [RAG CONTEXT USED]: {context}
+    [EXECUTION TRACE]: {execution_trace}
 
-    → Trả lời ngắn gọn: 'hợp lệ' hoặc 'cần làm lại', và lý do.
+    -> Respond only with 'valid' or 'retry' followed by a brief reason. The response must be 'retry' if the context was ignored or if the answer is insufficient.
     """,
+    
+    # Bạn có thể thêm một prompt mẫu cho Action Node tại đây
+    "action": """
+    You are an instructional assistant. Your goal is to fulfill the action plan based strictly on the provided RAG context.
+    
+    [RETRIEVED KNOWLEDGE]: {context}
+    [CURRENT ACTION STEP]: {step}
+    
+    -> Generate detailed instructions or a quiz question based ONLY on the RETRIEVED KNOWLEDGE.
+    """
 }

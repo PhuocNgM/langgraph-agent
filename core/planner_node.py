@@ -1,28 +1,49 @@
 # core/planner_node.py
+from typing import Dict, Any
+from core.state import AgentState, ProgressLog
+from llm.llm_client import call_llm # Assuming this is used for planning
+from datetime import datetime
 
-from core.state import AgentState
-from langgraph.types import NodeOutput
-from typing import Dict
-from llm.llm_client import LLMClient
-from llm.prompt_templates import PROMPT_TEMPLATES
-
-def planner_node(state: AgentState):
+def planner_node(state: AgentState) -> Dict[str, Any]:
     """
-    Sinh kế hoạch hành động (plan) dựa trên input từ người dùng.
+    Analyzes the current request, retrieved context, and history to form a plan.
     """
-    user_input = state.get("input")
-    if not user_input:
-        return {"error": "Không có input để lập kế hoạch."}
+    print("--- STATUS: PLANNER NODE EXECUTING ---")
+    
+    user_input = state.get("input", "No user query.")
+    context = state.get("context", "No context retrieved.")
+    # history = state.get("history", []) # Uncomment if using history
 
-    llm = LLMClient()
+    # NOTE: In a real agent, this calls the LLM with the planner prompt
+    planner_prompt = f"""
+    You are an expert planner. Based on the user query and the RAG context:
+    [CONTEXT]: {context}
+    [QUERY]: {user_input}
+    
+    Determine the optimal next step to generate the final response. 
+    Respond only with the plan, phrased as a single action step.
+    """
 
-    # Gọi LLM với prompt
-    prompt = PROMPT_TEMPLATES.format(user_input=user_input)
-    plan = llm.generate(prompt)
+    try:
+        # Example: Calling LLM to generate plan
+        plan = call_llm(planner_prompt) 
+        print(f"Plan generated: {plan[:50]}...")
+    except Exception:
+        # Fallback to a default plan if LLM call fails
+        plan = "Analyze the provided RAG context and summarize the key findings."
 
-    # Cập nhật state
-    state.set("plan", plan)
-    return {"plan": plan}
+    step_info = "Planner finished execution."
+    
+    # Create log
+    log_entry = ProgressLog(
+        timestamp=datetime.now().isoformat(timespec="seconds"),
+        step_name="planner_node",
+        update_key="plan",
+        value=plan
+    )
 
-
-# [planner_node] → [action_node] → [reflect_node] → [memory_node] → END
+    return {
+        "plan": plan,
+        "step_info": step_info,
+        "progress": state.get("progress", []) + [log_entry],
+    }

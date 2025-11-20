@@ -1,31 +1,28 @@
 # core/memory_node.py
+from typing import Dict, Any
+from datetime import datetime
+from core.state import AgentState, ProgressLog
 
-from core.state import AgentState
-from langgraph.types import NodeOutput
-
-def memory_node(state: AgentState) -> NodeOutput:
-    """
-    Node bộ nhớ: lưu lại thông tin hội thoại và kết quả.
-    """
-
-    user_input = state.get("input", "")
-    plan = state.get("plan", "")
-    result = state.get("result", "")
+def memory_node(state: AgentState) -> Dict[str, Any]:
+    """ Simulates updating the long-term memory with the final reflection/progress. """
+    print("--- STATUS: MEMORY NODE EXECUTING ---")
+    
     reflection = state.get("reflection", "")
-    history = state.get("history", [])
+    progress = state.get("progress", [])
 
-    # Cập nhật lịch sử hội thoại
-    new_entry = {
-        "input": user_input,
-        "plan": plan,
-        "result": result,
-        "reflection": reflection,
-    }
-    updated_history = history + [new_entry]
+    # In a real system, you would call a database client here
+    print(f"🧠 Saving to Memory: {len(progress)} steps and final reflection.")
+    
+    # Create log
+    log_entry = ProgressLog(
+        timestamp=datetime.now().isoformat(timespec="seconds"),
+        step_name="memory_node",
+        update_key="memory_saved",
+        value=True
+    )
 
-    # Trả kết quả cuối cùng (END node)
+    # Return updates
     return {
-        "history": updated_history,
-        "final_output": result,
-        "step": "memory → END",
+        "memory_saved": True,
+        "progress": state.get("progress", []) + [log_entry]
     }
