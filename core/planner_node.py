@@ -12,9 +12,8 @@ def planner_node(state: AgentState) -> Dict[str, Any]:
     
     user_input = state.get("input", "No user query.")
     context = state.get("context", "No context retrieved.")
-    # history = state.get("history", []) # Uncomment if using history
+    # history = state.get("history", []) 
 
-    # NOTE: In a real agent, this calls the LLM with the planner prompt
     planner_prompt = f"""
     You are an expert planner. Based on the user query and the RAG context:
     [CONTEXT]: {context}
@@ -25,7 +24,7 @@ def planner_node(state: AgentState) -> Dict[str, Any]:
     """
 
     try:
-        # Example: Calling LLM to generate plan
+        # Calling LLM to generate plan
         plan = call_llm(planner_prompt) 
         print(f"Plan generated: {plan[:50]}...")
     except Exception:
@@ -43,6 +42,7 @@ def planner_node(state: AgentState) -> Dict[str, Any]:
     )
 
     return {
+        "context": state.get("context", ""), # <-- BẮT BUỘC trả lại context
         "plan": plan,
         "step_info": step_info,
         "progress": state.get("progress", []) + [log_entry],

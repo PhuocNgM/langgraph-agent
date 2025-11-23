@@ -23,11 +23,11 @@ def action_node(state: AgentState) -> Dict[str, Any]:
 
         Step to execute: {step}
         Generate detailed instructions OR a short quiz question based only on the RETRIEVED KNOWLEDGE for this step.
-        If the context is insufficient, state that you cannot proceed.
+        If the context is insufficient, state that the information is limited, BUT still attempt to provide a brief answer based on what you have.        
         """
-        
+
         output = call_llm(prompt)
-        print(f"🧠 LLM Output (Step {i}): {output[:100]}...") # Print EN
+        print(f"LLM Output (Step {i}): {output[:100]}...") # Print EN
         
         log_entry = ProgressLog(
             # ... (log creation) ...
@@ -37,5 +37,6 @@ def action_node(state: AgentState) -> Dict[str, Any]:
         new_logs.append(log_entry)
 
     return {
+        "context": state.get("context", ""), # <-- BẮT BUỘC trả lại context
         "progress": state.get("progress", []) + new_logs
     }

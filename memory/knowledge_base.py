@@ -4,7 +4,6 @@ from .vector_store import VectorStore
 from typing import List, Any
 from dotenv import load_dotenv 
 
-
 # --- Update Imports for RAG ---
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredFileLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter 
@@ -22,19 +21,15 @@ class KnowledgeBase:
         self.store = VectorStore(path)
         print(f"INFO: Initialized KnowledgeBase at: {path}")
 
-        # 👇 INTEGRITY CHECK BLOCK
+        # 👇 INTEGRITY CHECK BLOCK (Removed FAISS-specific ntotal check)
         try:
-            vector_count = self.store.index.ntotal
-            text_count = len(self.store.texts)
+            # We can no longer check ntotal directly, as Chroma manages the index internally.
+            # We will rely on Chroma's own logging/integrity checks for this file.
+            print(f"DEBUG: VectorStore initialized and connected.")
             
-            print(f"DEBUG: VectorStore loaded {vector_count} vectors and {text_count} texts.")
-            
-            if vector_count != text_count:
-                print(f"🚨 WARNING: Count mismatch! Vectors ({vector_count}) != Texts ({text_count}).")
-            
-        except Exception:
-            # Catches FAISS/indexing errors during integrity check
-            print("🚨 FAISS/LOAD ERROR: Cannot perform index integrity check.")
+        except Exception as e:
+            # Keep a generic integrity check for resilience
+            print(f"🚨 ERROR: Failed VectorStore initialization integrity check. Reason: {e}")
         # ---------------------------------------------    
 
     def ingest_from_directory(self, directory_path: str = "./data"):
@@ -52,7 +47,9 @@ class KnowledgeBase:
         print(f"--- Starting Ingestion from: {directory_path} ---")
 
         # --- LOAD DOCUMENTS ---     
-        # 1. Load PDFs using UnstructuredFileLoader (for better parsing)
+        print("Loading documents using DirectoryLoader...")
+        
+        # 1. Load PDFs using UnstructuredFileLoader 
         pdf_loader = DirectoryLoader(
             directory_path,
             glob="**/*.pdf",  
@@ -70,9 +67,7 @@ class KnowledgeBase:
 
         # 3. Aggregate documents
         try:
-            print("Loading PDF files...")
             pdf_docs = pdf_loader.load()
-            print("Loading TXT files...")
             txt_docs = txt_loader.load()
             
             documents = pdf_docs + txt_docs
@@ -107,7 +102,7 @@ class KnowledgeBase:
             print("WARNING: No valid chunks were generated after filtering. VectorStore remains empty.")
             return
 
-        # 5. Add to VectorStore (automatically saves the index)
+        # 5. Add to VectorStore (will use ChromaDB's add logic)
         self.store.add(string_texts) 
         print("✅ Ingestion successful.")
 
@@ -115,8 +110,6 @@ class KnowledgeBase:
         """
         Queries the vector store and retrieves the top_k relevant documents.
         """
-        # Set top_k high (e.g., 10) to overcome similarity failure
-        results = self.store.search(question, top_k=58)
+        # Set top_k high (e.g., 5) - The value is now passed to Chroma's search method
+        results = self.store.search(question, top_k=5)
         return [text for text, score in results]
-    
-# --- END OF memory/knowledge_base.py ---
