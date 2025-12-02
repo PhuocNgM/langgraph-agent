@@ -4,18 +4,16 @@ from typing import Dict, Any
 from datetime import datetime
 from core.state import AgentState, ProgressLog  
 from memory.knowledge_base import KnowledgeBase 
-# IMPORTANT: Removed import for call_llm (no translation needed)
 
-# --- Knowledge Base Configuration ---
+# Knowledge Base Config
 KB_PATH = "./memory/knowledge_base_store" 
-# ------------------------------------
 
 # 1. Initialize Knowledge Base ONCE upon module load
 try:
     kb = KnowledgeBase(path=KB_PATH)
-    print(f"✅ [RETRIEVER] Connected to Knowledge Base at: {KB_PATH}")
+    print(f"[RETRIEVER] Connected to Knowledge Base at: {KB_PATH}")
 except Exception as e:
-    print(f"❌ [RETRIEVER] ERROR: Failed to load Knowledge Base. Error: {e}")
+    print(f"[RETRIEVER] ERROR: Failed to load Knowledge Base. Error: {e}")
     kb = None
 
 def retriever_node(state: AgentState) -> Dict[str, Any]:
@@ -28,23 +26,22 @@ def retriever_node(state: AgentState) -> Dict[str, Any]:
 
     print("--- 🔎 Retrieving Base Knowledge (RAG)... ---")
     
-    # 1. ASSUME INPUT IS ENGLISH AND USE DIRECTLY FOR QUERY
     query_en = state.get("input", "")
     
-    # 2. Execute search
+    # Execute search
     try:
         docs = kb.query(query_en) 
     except Exception as e:
         print(f"Retrieval Error: {e}")
         docs = []
 
-    # --- Debugging Prints (Keep for now to confirm retrieval) ---
+    # Debugging Prints 
     print(f"DEBUG: Retrieved {len(docs)} documents.")
     if len(docs) > 0:
         print(f"DEBUG: First 50 chars of document 1: {docs[0][:50]}")
     # -----------------------------------------------------------
 
-    # 3. Format context
+    # Format context
     formatted_context = "\n\n--- Retrieved Knowledge ---\n"
     if not docs:
         formatted_context += "No relevant documents found."
@@ -52,9 +49,9 @@ def retriever_node(state: AgentState) -> Dict[str, Any]:
         for i, doc_content in enumerate(docs):
             formatted_context += f"\n[Source {i+1}]: {doc_content}\n"
     
-    print("\n--- 🔎 RETRIEVED CONTEXT (DEBUG) ---")
+    print("\n--- RETRIEVED CONTEXT (DEBUG) ---")
     if not docs:
-        print("❌ ERROR: Context is empty. VectorStore returned 0 results.")
+        print("ERROR: Context is empty. VectorStore returned 0 results.")
     else:
         print(formatted_context[:500].replace('\n', ' '))
     print("-----------------------------------------\n")
@@ -71,5 +68,5 @@ def retriever_node(state: AgentState) -> Dict[str, Any]:
     return {
         "context": formatted_context, 
         "progress": state.get("progress", []) + [log_entry],
-        "input": query_en # Ensure the English query is saved
+        "input": query_en  # Pass through original input
     }

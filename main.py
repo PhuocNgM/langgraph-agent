@@ -11,11 +11,9 @@ load_dotenv()
 
 def main_chat():
     """
-    Chạy agent trong chế độ vòng lặp chat tương tác.
+    Run Agent in loop.
     """
     
-    # --- 1. Biên dịch đồ thị MỘT LẦN ---
-    # Việc này chỉ cần làm một lần khi khởi động
     try:
         graph_builder = AgentGraph() 
         app = graph_builder.compile()
@@ -23,7 +21,7 @@ def main_chat():
         print(f"ERROR: Failed to compile graph: {e}")
         return
 
-    print("--- 🤖 Agent is Ready. Type 'exit' to quit. ---")
+    print("--- Agent is Ready. Type 'exit' to quit. ---")
 
     while True:
         try:
@@ -35,7 +33,7 @@ def main_chat():
             
             # ... (Tạo initial_chat_state với input = user_message) ...
             initial_chat_state: AgentState = {
-                'trainee_name': 'Ngoc', 
+                'trainee_name': 'Phuoc', 
                 'goal': 'Answer/Execute user requests',
                 'level': 'beginner',
                 'input': user_message, 

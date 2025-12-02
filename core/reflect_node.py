@@ -7,7 +7,7 @@ from llm.llm_client import call_llm
 
 def reflect_node(state: AgentState) -> Dict[str, Any]:
     query = state.get("input", "No user query.") 
-    context = state.get("context", "No base knowledge provided.")
+    context = state.get("context", "")
     progress_list = state.get("progress", []) 
     
     progress_text = "\n".join([
@@ -25,12 +25,13 @@ def reflect_node(state: AgentState) -> Dict[str, Any]:
     [EXECUTION PROGRESS]:
     {progress_text}
 
-    INSTRUCTIONS:
+    INSTRUCTIONS::
     1.  Strictly use only the information available in the RETRIEVED KNOWLEDGE section.
-    2.  If the context does not contain sufficient information to answer the user's query ({query}), you MUST reply: "I apologize, but I could not find specific information related to your query in the reference documents."
-    3.  Provide the final response directly.
+    2.  If the context does not contain sufficient information to fully answer the query, reply with the most relevant information found, BUT also add the disclaimer: "Note: The provided context was limited."
+    3.  If the context is completely empty, you MUST reply: "I apologize, but I could not find specific information related to your query in the reference documents."
+    4.  Provide the final response directly.
     """
-    # 👇 THÊM KHỐI LỆNH CHẨN ĐOÁN NÀY TRƯỚC KHI GỌI LLM
+    # Debugging print
     print("\n--- FINAL LLM PROMPT SENT (DEBUG) ---")
     print(prompt) 
     print("-------------------------------------\n")

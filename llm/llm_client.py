@@ -22,11 +22,9 @@ class LLMClient:
                 raise ValueError("OPENAI_API_KEY is missing or empty in configuration.")
             
             # Instantiate the modern OpenAI client object, passing the API key directly
-            # This replaces the deprecated openai.api_key assignment
             self.client = OpenAI(api_key=api_key)
             
         else:
-            # Placeholder for future expansion (e.g., Ollama/Gemini)
             raise ValueError(f"Unsupported LLM provider: {self.provider}")
 
     def generate(self, prompt: str) -> str:

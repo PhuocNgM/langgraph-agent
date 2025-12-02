@@ -13,7 +13,7 @@ def test_query():
         print(f"❌ LỖI: Thư mục Knowledge Base '{KB_PATH}' không tồn tại. Vui lòng chạy lại ingest.py.")
         return
         
-    # Khởi tạo KnowledgeBase (nó sẽ load dữ liệu)
+    # Khởi tạo KnowledgeBase 
     try:
         kb = KnowledgeBase(path=KB_PATH)
     except Exception as e:
