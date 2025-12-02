@@ -21,12 +21,13 @@ def AgentGraph  () -> StateGraph:
     graph.add_node("memory", memory_node)
 
     # Định nghĩa graph
+    graph.add_edge("retriever", "planner")
     graph.add_edge("planner", "action")
     graph.add_edge("action", "reflect")
     graph.add_edge("reflect", "memory")
     graph.add_edge("memory", END)
 
     # Node khởi đầu
-    graph.set_entry_point("planner")
+    graph.set_entry_point("retriever")
 
     return graph
