@@ -11,7 +11,7 @@ def memory_node(state: AgentState) -> Dict[str, Any]:
     progress = state.get("progress", [])
 
     # In a real system, you would call a database client here
-    print(f"🧠 Saving to Memory: {len(progress)} steps and final reflection.")
+    print(f"Saving to Memory: {len(progress)} steps and final reflection.")
     
     # Create log
     log_entry = ProgressLog(

@@ -24,7 +24,7 @@ def retriever_node(state: AgentState) -> Dict[str, Any]:
         print("Error: Knowledge base unavailable.")
         return {"context": "Error: Knowledge base unavailable."}
 
-    print("--- 🔎 Retrieving Base Knowledge (RAG)... ---")
+    # print("--- 🔎 Retrieving Base Knowledge (RAG)... ---")
     
     query_en = state.get("input", "")
     
@@ -36,9 +36,9 @@ def retriever_node(state: AgentState) -> Dict[str, Any]:
         docs = []
 
     # Debugging Prints 
-    print(f"DEBUG: Retrieved {len(docs)} documents.")
-    if len(docs) > 0:
-        print(f"DEBUG: First 50 chars of document 1: {docs[0][:50]}")
+    # print(f"DEBUG: Retrieved {len(docs)} documents.")
+    # if len(docs) > 0:
+    #     print(f"DEBUG: First 50 chars of document 1: {docs[0][:50]}")
     # -----------------------------------------------------------
 
     # Format context
@@ -49,12 +49,12 @@ def retriever_node(state: AgentState) -> Dict[str, Any]:
         for i, doc_content in enumerate(docs):
             formatted_context += f"\n[Source {i+1}]: {doc_content}\n"
     
-    print("\n--- RETRIEVED CONTEXT (DEBUG) ---")
-    if not docs:
-        print("ERROR: Context is empty. VectorStore returned 0 results.")
-    else:
-        print(formatted_context[:500].replace('\n', ' '))
-    print("-----------------------------------------\n")
+    # print("\n--- RETRIEVED CONTEXT (DEBUG) ---")
+    # if not docs:
+    #     print("ERROR: Context is empty. VectorStore returned 0 results.")
+    # else:
+    #     print(formatted_context[:500].replace('\n', ' '))
+    # print("-----------------------------------------\n")
 
 
     # 4. Create log and Return

@@ -26,7 +26,7 @@ def planner_node(state: AgentState) -> Dict[str, Any]:
     try:
         # Calling LLM to generate plan
         plan = call_llm(planner_prompt) 
-        print(f"Plan generated: {plan[:50]}...")
+        # print(f"Plan generated: {plan[:50]}...")
     except Exception:
         # Fallback to a default plan if LLM call fails
         plan = "Analyze the provided RAG context and summarize the key findings."

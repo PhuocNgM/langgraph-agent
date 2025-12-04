@@ -21,25 +21,17 @@ def AgentGraph  () -> StateGraph:
     graph.add_node("reflect", reflect_node)
     graph.add_node("memory", memory_node)
 
-<<<<<<< HEAD
-    # Định nghĩa graph
-    graph.add_edge("retriever", "planner")
-=======
+
     # 2. Define Edges (The Flow)
     # RAG must run before planning
     graph.add_edge("retriever", "planner") 
->>>>>>> origin/main
     graph.add_edge("planner", "action")
     graph.add_edge("action", "reflect")
     graph.add_edge("reflect", "memory")
     graph.add_edge("memory", END)
 
-<<<<<<< HEAD
-    # Node khởi đầu
-    graph.set_entry_point("retriever")
-=======
+
     # 3. Set the Entry Point 
     graph.set_entry_point("retriever") 
->>>>>>> origin/main
 
     return graph

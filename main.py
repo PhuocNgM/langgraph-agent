@@ -1,10 +1,10 @@
 # main.py
 from core.graph import AgentGraph
-from core.state import AgentState # Vẫn dùng TypedDict để kiểm tra kiểu
+from core.state import AgentState 
     
 from typing import Dict, Any
 
-from dotenv import load_dotenv # <-- Import gói dotenv
+from dotenv import load_dotenv # <-- Import dotenv
 import os
 
 load_dotenv()
@@ -31,11 +31,11 @@ def main_chat():
                 print("Agent: Goodbye!")
                 break
             
-            # ... (Tạo initial_chat_state với input = user_message) ...
+            # Set up the initial state for the agent
             initial_chat_state: AgentState = {
                 'trainee_name': 'Phuoc', 
                 'goal': 'Answer/Execute user requests',
-                'level': 'beginner',
+                'level': 'Intern',
                 'input': user_message, 
                 'progress': [],
                 'plan': None,

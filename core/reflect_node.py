@@ -25,19 +25,22 @@ def reflect_node(state: AgentState) -> Dict[str, Any]:
     [EXECUTION PROGRESS]:
     {progress_text}
 
-    INSTRUCTIONS::
-    1.  Strictly use only the information available in the RETRIEVED KNOWLEDGE section.
-    2.  If the context does not contain sufficient information to fully answer the query, reply with the most relevant information found, BUT also add the disclaimer: "Note: The provided context was limited."
-    3.  If the context is completely empty, you MUST reply: "I apologize, but I could not find specific information related to your query in the reference documents."
-    4.  Provide the final response directly.
+    INSTRUCTIONS:
+        1.  Analyze ALL retrieved context chunks and synthesize a comprehensive, detailed response that fully answers the query.
+        2.  Your response MUST be structured into **at least three (3) distinct paragraphs** and MUST have a **minimum length of 200 words**.
+        3.  Structure the paragraphs to cover: (1) Purpose/Introduction, (2) Methodology, and (3) Key Considerations/Summary.
+        4.  Strictly use only the information available in the RETRIEVED KNOWLEDGE section.
+        5.  If the context does not contain sufficient information, reply with the most relevant information found, BUT also add the disclaimer: "Note: The provided context was limited."
+        6.  Provide the final response directly.
+    
     """
     # Debugging print
-    print("\n--- FINAL LLM PROMPT SENT (DEBUG) ---")
-    print(prompt) 
-    print("-------------------------------------\n")
+    # print("\n--- FINAL LLM PROMPT SENT (DEBUG) ---")
+    # print(prompt) 
+    # print("-------------------------------------\n")
     
     reflection = call_llm(prompt)
-    print(f"💭 Reflection: {reflection[:150]}...") # Print EN
+    print(f"Reflection: {reflection[:150]}...") # Print EN
 
     log_entry = ProgressLog(
         # ... (log creation) ...

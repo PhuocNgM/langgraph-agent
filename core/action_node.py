@@ -27,7 +27,7 @@ def action_node(state: AgentState) -> Dict[str, Any]:
         """
 
         output = call_llm(prompt)
-        print(f"LLM Output (Step {i}): {output[:100]}...") # Print EN
+        # print(f"LLM Output (Step {i}): {output[:100]}...") # Print EN
         
         log_entry = ProgressLog(
             # ... (log creation) ...
@@ -37,6 +37,7 @@ def action_node(state: AgentState) -> Dict[str, Any]:
         new_logs.append(log_entry)
 
     return {
-        "context": state.get("context", ""), # <-- BẮT BUỘC trả lại context
+        "context": state.get("context", ""), # return context
+        # "reflection": output,  # Final output from last step    
         "progress": state.get("progress", []) + new_logs
     }
