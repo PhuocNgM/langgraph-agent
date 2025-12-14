@@ -1,0 +1,11 @@
+.env
+.vscode/settings.json
+.DS_Store
+__pycache__/
+.ipynb_checkpoints/
+logs/
+data/
+outputs/
+*.pyc
+*.pyo           
+memory/knowledge_base_store/
