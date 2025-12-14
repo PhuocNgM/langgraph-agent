@@ -5,7 +5,7 @@
 ![RAG](https://img.shields.io/badge/Architecture-RAG-green)
 ![OpenAI](https://img.shields.io/badge/Model-GPT--4o-purple)
 
-An Autonomous AI Agent designed to assist laboratory engineers in retrieving, analyzing, and calculating technical specifications from ASTM Standards (D5185, D6557, etc.).
+An Autonomous AI Agent designed to assist laboratory engineers in retrieving, analyzing, and calculating technical specifications from ASTM Standards (D5185, etc.).
 
 > Purpose: Built to support new-hire onboarding and reduce manual lookup time in VILAS accredited laboratories.
 
